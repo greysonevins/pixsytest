@@ -1,4 +1,4 @@
-var app = angular.module('flapperNews', ['ui.router']);
+var app = angular.module('pixsy-test', ['ui.router']);
 
 app.config([
 	'$stateProvider',
@@ -17,74 +17,28 @@ app.config([
 				}
 			})
 			.state('login', {
-				url: '/login',
-				templateUrl: '/login.html',
-				controller: 'AuthCtrl',
-				onEnter: ['$state', 'auth', function($state, auth){
-					if (auth.isLoggedIn()){
-						$state.go('home');
-					}
-				}]
-			})
-			.state('register', {
-				url: '/register',
-				templateUrl: '/register.html',
-				controller: 'AuthCtrl',
-				onEnter: ['$state', 'auth', function($state, auth){
-					if(auth.isLoggedIn()){
-						$state.go('home');
-					}
-				}]
-			});
+	      url: '/login',
+	      templateUrl: '/login.html',
+	      controller: 'AuthCtrl',
+	      onEnter: ['$state', 'auth', function($state, auth){
+	        if(auth.isLoggedIn()){
+	          $state.go('home');
+	        }
+	      }]
+	    })
+	    .state('register', {
+	      url: '/register',
+	      templateUrl: '/register.html',
+	      controller: 'AuthCtrl',
+	      onEnter: ['$state', 'auth', function($state, auth){
+	        if(auth.isLoggedIn()){
+	          $state.go('home');
+	        }
+	      }]
+	    });
 		$urlRouterProvider.otherwise('home');
 	}]);
-app.factory('auth', ['$http', '$window', function($http, $window){
-	var auth = {};
-	auth.logIn = function(user){
-	  return $http.post('/login', user).success(function(data){
-	    auth.saveToken(data.token);
-	  });
-	};
-	auth.saveToken = function (token){
-		$window.localStorage['pixsy-user-token'] = token;
-	};
 
-	auth.getToken = function(){
-		return $window.localStorage['pixsy-user-token'];
-	}
-
-	auth.isLoggedIn = function(){
-		var token = auth.getToken();
-
-		if(token){
-			var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-			return payload.exp > Date.now() / 1000;
-		} else {
-			return false;
-		}
-	};
-
-	auth.currentUser = function(){
-		if(auth.isLoggedIn()){
-			var token = auth.getToken();
-			var payload = JSON.parse($window.atob(token.split('.')[1]));
-
-			return payload.email;
-		}
-	};
-
-	auth.register = function(user){
-		return $http.post('/register', user).success(function(data){
-			auth.saveToken(data.token);
-		});
-	};
-
-	auth.logOut = function(){
-		$window.localStorage.removeItem('pixsy-user-token');
-	};
-  return auth;
-}])
 app.factory('comments', ['$http', 'auth', function($http, auth){
   var o = {
   	comments: []
@@ -110,25 +64,68 @@ app.factory('comments', ['$http', 'auth', function($http, auth){
 	  });
 	};
    return o;
-}]);
+}])
+app.factory('auth', ['$http', '$window', '$rootScope', function($http, $window, $rootScope){
+   var auth = {
+    saveToken: function (token){
+      $window.localStorage['pixsy-token'] = token;
+    },
+    getToken: function (){
+      return $window.localStorage['pixsy-token'];
+    },
+    isLoggedIn: function(){
+      var token = auth.getToken();
+
+      if(token){
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+        
+        return payload.exp > Date.now() / 1000;
+      } else {
+        return false;
+      }
+    },
+    currentUser: function(){
+      if(auth.isLoggedIn()){
+        var token = auth.getToken();
+        var payload = JSON.parse($window.atob(token.split('.')[1]));
+
+        return payload.email;
+      }
+    },
+    register: function(user){
+      return $http.post('/register', user).success(function(data){
+        auth.saveToken(data.token);
+      });
+    },
+    logIn: function(user){
+      return $http.post('/login', user).success(function(data){
+        auth.saveToken(data.token);
+      });
+    },
+    logOut: function(){
+      $window.localStorage.removeItem('pixsy-token');
+    }
+  };
+
+  return auth;
+}])
 app.controller('MainCtrl', [
 '$scope',
 'comments',
 function($scope, comments){
 	$scope.comments = comments.comments;
 	$scope.addPost = function(){
-  	if(!$scope.title || $scope.title === '') { return; }
+  	if(!$scope.body || $scope.body === '') { return; }
   	comments.create({
-  			body: $scope.title,
-  			author: $scope.link,
+  			body: $scope.body
   		});
-  	$scope.title = '';
+  	$scope.body = '';
   	$scope.link = '';
 	};
 	$scope.incrementUpvotes = function(comment) {
 	  comments.upvote(comment);
 	};
-}]);
+}])
 
 app.controller('AuthCtrl', [
 '$scope',

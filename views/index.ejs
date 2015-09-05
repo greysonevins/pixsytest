@@ -8,7 +8,7 @@
   <script src="/javascripts/angularApp.js"></script>
   <style> .glyphicon-thumbs-up { cursor:pointer } </style>
 </head>
-<body ng-app="flapperNews" ng-controller="MainCtrl">
+<body ng-app="pixsy-test" ng-controller="MainCtrl">
   <nav class="navbar navbar-default pull-right" ng-controller="NavCtrl">
     <ul class="nav navbar-nav">
       <li ng-show="isLoggedIn()"><a>{{ currentUser() }}</a></li>
@@ -51,14 +51,8 @@
         <div class="form-group">
           <input type="text"
             class="form-control"
-            placeholder="Title"
-            ng-model="title"></input>
-        </div>
-        <div class="form-group">
-          <input type="text"
-          class="form-control"
-          placeholder="Link"
-          ng-model="link"></input>
+            placeholder="Pixsy Comment"
+            ng-model="body"></input>
         </div>
         <button type="submit" class="btn btn-primary">Post</button>
       </form>
@@ -93,33 +87,33 @@
 			  </form>
 			</script>
 			<script type="text/ng-template" id="/login.html">
-		  <div class="page-header">
-		    <h1>Pixsy Test</h1>
-		  </div>
+      <div class="page-header">
+        <h1>Pixsy Test</h1>
+      </div>
 
-		  <div ng-show="error" class="alert alert-danger row">
-		    <span>{{ error.message }}</span>
-		  </div>
+      <div ng-show="error" class="alert alert-danger row">
+        <span>{{ error.message }}</span>
+      </div>
 
-		  <form ng-submit="logIn()"
-		    style="margin-top:30px;">
-		    <h3>Log In</h3>
+      <form ng-submit="logIn()"
+        style="margin-top:30px;">
+        <h3>Log In</h3>
 
-		    <div class="form-group">
-		      <input type="text"
-		      class="form-control"
-		      placeholder="Email"
-		      ng-model="user.email"></input>
-		    </div>
-		    <div class="form-group">
-		      <input type="password"
-		      class="form-control"
-		      placeholder="Password"
-		      ng-model="user.password"></input>
-		    </div>
-		    <button type="submit" class="btn btn-primary">Log In</button>
-		  </form>
-		  </script>
+        <div class="form-group">
+          <input type="text"
+          class="form-control"
+          placeholder="Email"
+          ng-model="user.email"></input>
+        </div>
+        <div class="form-group">
+          <input type="password"
+          class="form-control"
+          placeholder="Password"
+          ng-model="user.password"></input>
+        </div>
+        <button type="submit" class="btn btn-primary">Log In</button>
+      </form>
+  </script>
   </div>
 </body>
 </html>
